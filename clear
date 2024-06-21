@@ -1,0 +1,48 @@
+[33mcommit 682be41731583913c76395f17fe6703dd5637ebf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Gabriel <gabrielcarneirodesouza2.0@gmail.com>
+Date:   Thu Jun 20 21:09:48 2024 -0300
+
+    [200~
+    BoardException and defensive programming
+
+[33mcommit e1ccbcdf1d501103122514a5397ecff7747ba54c[m
+Author: Gabriel <gabrielcarneirodesouza2.0@gmail.com>
+Date:   Thu Jun 20 20:33:52 2024 -0300
+
+    placing pieces on the board
+
+[33mcommit 2f26720af2b22a99dd09690ad18e0942211b91c8[m
+Author: Gabriel <gabrielcarneirodesouza2.0@gmail.com>
+Date:   Wed Jun 19 23:43:47 2024 -0300
+
+    chess layer and printing the board
+
+[33mcommit 860a84f6fdae4cb2c42ce6bc1c7e99650a7d796c[m
+Author: Gabriel <gabrielcarneirodesouza2.0@gmail.com>
+Date:   Wed Jun 19 21:33:56 2024 -0300
+
+    Starting to implement board and piece again
+
+[33mcommit bd066942ab03d78f8bc6acf7b576c7048f08f638[m
+Author: Gabriel <gabrielcarneirodesouza2.0@gmail.com>
+Date:   Wed Jun 19 21:21:40 2024 -0300
+
+    Starting to implement board and piece
+
+[33mcommit e50c0741e4462922842df036860401cc0c8460d5[m
+Author: Gabriel <gabrielcarneirodesouza2.0@gmail.com>
+Date:   Wed Jun 19 21:02:22 2024 -0300
+
+    First class: Positon
+
+[33mcommit 14b0a330a7c3a7fe5f449002b6699aecda56d7b9[m
+Author: Gabriel <gabrielcarneirodesouza2.0@gmail.com>
+Date:   Wed Jun 19 20:33:22 2024 -0300
+
+    Project created
+
+[33mcommit ba8cdd72e2bcfabc465baee42e0319cfd85e7bfe[m
+Author: Gabri3lCarneiro <138947353+Gabri3lCarneiro@users.noreply.github.com>
+Date:   Wed Jun 19 20:15:07 2024 -0300
+
+    Initial commit
