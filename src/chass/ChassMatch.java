@@ -47,6 +47,9 @@ public class ChassMatch {
 		if(!board.therIsAPiece(position)) {
 			throw new ChassException("There is no piece on source position");
 		}
+		if(!board.piece(position).isThereAnyPossibleMovie()) {
+			throw new ChassException("There is no possible moves for the chosen piece ");
+		}
 	}
 	
 	private void placeNewPiece(char column, int row, ChassPiece piece) {
