@@ -34,45 +34,57 @@ public class UI {
 		System.out.print("\033[H\033[2J");
 		System.out.flush();
 	}
-	
-	
+
 	public static ChassPosition readChessPosition(Scanner sc) {
 		try {
-		String s = sc.nextLine();
-		char column = s.charAt(0);
-		
-		int row = Integer.parseInt(s.substring(1));
-		return new ChassPosition(column, row);
-		}
-		catch(RuntimeException e) {
+			String s = sc.nextLine();
+			char column = s.charAt(0);
+
+			int row = Integer.parseInt(s.substring(1));
+			return new ChassPosition(column, row);
+		} catch (RuntimeException e) {
 			throw new InputMismatchException("Error reading ChessPosition. Valid values are from 01 to h8");
 		}
 	}
-	
-	public static void printBoard(ChassPiece[][] pieces) {
+
+	public static void printBoard(ChassPiece[][] pieces, boolean[][] possibleMoves) {
 
 		for (int i = 0; i < pieces.length; i++) {
 			System.out.print(8 - i + " ");
 			for (int j = 0; j < pieces.length; j++) {
-				printPiece(pieces[i][j]);
+				printPiece(pieces[i][j], possibleMoves[i][j]);
 			}
 			System.out.println();
 		}
 		System.out.println(" a b c d e f g h");
 	}
 
-	private static void printPiece(ChassPiece piece) {
-    	if (piece == null) {
-            System.out.print("-");
-        }
-        else {
-            if (piece.getColor() == Color.WHITE) {
-                System.out.print(ANSI_WHITE + piece + ANSI_RESET);
-            }
-            else {
-                System.out.print(ANSI_YELLOW + piece + ANSI_RESET);
-            }
-        }
-        System.out.print(" ");
+	public static void printBoard(ChassPiece[][] pieces) {
+
+		for (int i = 0; i < pieces.length; i++) {
+			System.out.print(8 - i + " ");
+			for (int j = 0; j < pieces.length; j++) {
+				printPiece(pieces[i][j], false);
+			}
+			System.out.println();
+		}
+		System.out.println(" a b c d e f g h");
 	}
-}	
+
+	private static void printPiece(ChassPiece piece, boolean backGround) {
+		if (backGround) {
+			System.out.print(ANSI_BLUE_BACKGROUND);
+		}
+
+		if (piece == null) {
+			System.out.print("-" + ANSI_RESET);
+		} else {
+			if (piece.getColor() == Color.WHITE) {
+				System.out.print(ANSI_WHITE + piece + ANSI_RESET);
+			} else {
+				System.out.print(ANSI_YELLOW + piece + ANSI_RESET);
+			}
+		}
+		System.out.print(" ");
+	}
+}
