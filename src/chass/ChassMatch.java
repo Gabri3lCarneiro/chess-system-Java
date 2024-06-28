@@ -1,5 +1,8 @@
 package chass;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -12,6 +15,10 @@ public class ChassMatch {
 	private Color currentPlayer;
 	private Board board;
 	
+	private List<Piece> piecesOnTheBoard = new ArrayList<>();
+	private List<Piece> capturedPieces = new ArrayList<>();
+	
+	
 	
 	public ChassMatch() {
 		board = new Board(8, 8);
@@ -19,6 +26,7 @@ public class ChassMatch {
 		currentPlayer = Color.WHITE;
 		initialSetup();
 	}
+
 
 	public ChassPiece[][] getPices(){
 		ChassPiece[][] mat = new ChassPiece[board.getRows()][board.getColumns()];
@@ -29,7 +37,6 @@ public class ChassMatch {
 		}
 		return mat;
 	}
-	
 	
 	
 	
@@ -48,6 +55,8 @@ public class ChassMatch {
 		return board.piece(position).possibleMoves();
 	}
 	
+	
+	
 	public ChassPiece performChessMove(ChassPosition sourcePosition, ChassPosition targetPosition) {
 		Position source = sourcePosition.toPosition();
 		Position target = targetPosition.toPosition();
@@ -58,13 +67,21 @@ public class ChassMatch {
 		return (ChassPiece) capturedPiece;
 	}
 	
+	
+	
 	private Piece mekeMove(Position source, Position target) {
 		Piece p = board.removePiece(source);
 		Piece capturedPiece = board.removePiece(target);
 		board.placePiece(p, target);
+		if(capturedPiece != null) {
+			piecesOnTheBoard.remove(capturedPiece);
+			capturedPieces.addAll(capturedPieces);
+		}
 		return capturedPiece;
 	
 	}
+	   
+	
 	
 	private void validadeSourcePosition(Position position) {
 		if(!board.therIsAPiece(position)) {
@@ -78,15 +95,22 @@ public class ChassMatch {
 		}
 	}
 	
+	
+	
 	private void validateTargetPosition(Position source, Position target) {
 		if(!board.piece(source).possibleMove(target)) {
 		throw new ChassException("The choses piece can't move to target position");
 		}
 	}
 	
+	
+	
 	private void placeNewPiece(char column, int row, ChassPiece piece) {
 		board.placePiece(piece, new ChassPosition(column, row).toPosition());
+		piecesOnTheBoard.add(piece);
 	}
+	
+	
 	
 	private void nextTurn() {
 		turn++;
