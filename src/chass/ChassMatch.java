@@ -8,11 +8,15 @@ import chass.pieces.Rook;
 
 public class ChassMatch {
 
+	private int turn;
+	private Color currentPlayer;
 	private Board board;
 	
 	
 	public ChassMatch() {
 		board = new Board(8, 8);
+		turn = 1;
+		currentPlayer = Color.WHITE;
 		initialSetup();
 	}
 
@@ -26,6 +30,18 @@ public class ChassMatch {
 		return mat;
 	}
 	
+	
+	
+	
+	public int getTurn() {
+		return turn;
+	}
+
+	public Color getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	
 	public boolean[][] possibleMoves(ChassPosition sourcePosition) {
 		Position position = sourcePosition.toPosition();
 		validadeSourcePosition(position);
@@ -38,6 +54,7 @@ public class ChassMatch {
 		validadeSourcePosition(source);
 		validateTargetPosition(source, target);
 		Piece capturedPiece = mekeMove(source, target);
+		nextTurn();
 		return (ChassPiece) capturedPiece;
 	}
 	
@@ -53,6 +70,9 @@ public class ChassMatch {
 		if(!board.therIsAPiece(position)) {
 			throw new ChassException("There is no piece on source position");
 		}
+		if(currentPlayer != ((ChassPiece)board.piece(position)).getColor()) {
+			throw new ChassException("The chosen piece is not yours");
+		}
 		if(!board.piece(position).isThereAnyPossibleMovie()) {
 			throw new ChassException("There is no possible moves for the chosen piece ");
 		}
@@ -64,13 +84,19 @@ public class ChassMatch {
 		}
 	}
 	
-
 	private void placeNewPiece(char column, int row, ChassPiece piece) {
 		board.placePiece(piece, new ChassPosition(column, row).toPosition());
 	}
+	
+	private void nextTurn() {
+		turn++;
+		currentPlayer = (currentPlayer == Color.WHITE)? Color.BLACK  : Color.WHITE;
+	}
+	
+	
+	
 	private void initialSetup() {
 
-		
 		placeNewPiece('c', 1, new Rook(board, Color.WHITE));
         placeNewPiece('c', 2, new Rook(board, Color.WHITE));
         placeNewPiece('d', 2, new Rook(board, Color.WHITE));

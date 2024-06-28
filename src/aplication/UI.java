@@ -3,6 +3,7 @@ package aplication;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import chass.ChassMatch;
 import chass.ChassPiece;
 import chass.ChassPosition;
 import chass.Color;
@@ -47,6 +48,13 @@ public class UI {
 		}
 	}
 
+	public static void printMach(ChassMatch chassMatch) {
+		printBoard(chassMatch.getPices());
+		System.out.println();
+		System.out.println("Turn: " + chassMatch.getTurn());
+		System.out.println("Waiting player: " +  chassMatch.getCurrentPlayer());
+	}
+	
 	public static void printBoard(ChassPiece[][] pieces, boolean[][] possibleMoves) {
 
 		for (int i = 0; i < pieces.length; i++) {
