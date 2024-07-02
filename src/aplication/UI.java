@@ -58,9 +58,17 @@ public class UI {
 		printCapturedPieces(captured);
 		System.out.println();
 		System.out.println("Turn: " + chassMatch.getTurn());
+		if(!chassMatch.getChackMate()) {
+			
+		
 		System.out.println("Waiting player: " +  chassMatch.getCurrentPlayer());
-		if(chassMatch.getCheck()) {
+		if(chassMatch.getChackMate()) {
 			System.out.println("CHECK! ");
+		}
+		}
+		else {
+			System.out.println("CHECKMATE!");
+			System.out.println("Winner: " + chassMatch.getCurrentPlayer());
 		}
 	}
 	
@@ -73,7 +81,7 @@ public class UI {
 			}
 			System.out.println();
 		}
-		System.out.println("  a b c d e f g h");
+		System.out.println(" a b c d e f g h");
 	}
 
 	public static void printBoard(ChassPiece[][] pieces) {
