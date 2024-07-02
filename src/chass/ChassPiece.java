@@ -13,6 +13,9 @@ public abstract class ChassPiece extends Piece {
 		this.color = color;
 	}
 
+	public ChassPosition getChassPosition() {
+		return ChassPosition.fromPosition(position);
+	}
 	public Color getColor() {
 		return color;
 	}
