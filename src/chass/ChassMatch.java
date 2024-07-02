@@ -2,7 +2,6 @@ package chass;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import boardgame.Board;
@@ -82,9 +81,11 @@ public class ChassMatch {
 	}
 
 	private Piece makeMove(Position source, Position target) {
-		Piece p = board.removePiece(source);
+		ChassPiece p = (ChassPiece) board.removePiece(source);
+		p.increaseMoveCount();
 		Piece capturedPiece = board.removePiece(target);
 		board.placePiece(p, target);
+		
 		if (capturedPiece != null) {
 			piecesOnTheBoard.remove(capturedPiece);
 			capturedPieces.addAll(capturedPieces);
@@ -94,7 +95,8 @@ public class ChassMatch {
 	}
 
 	private void undoMove(Position source, Position target, Piece capturePiece) {
-		Piece p = board.removePiece(target);
+		ChassPiece p = (ChassPiece) board.removePiece(target);
+		p.decreaseMoveCount();
 		board.placePiece(p, source);
 
 		if (capturePiece != null) {
