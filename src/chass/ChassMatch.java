@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -94,8 +96,25 @@ public class ChassMatch {
 			piecesOnTheBoard.remove(capturedPiece);
 			capturedPieces.addAll(capturedPieces);
 		}
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() + 2){
+			Position sourceR = new Position(source.getRow(), source.getColumn() + 3);
+			Position targetR = new Position(source.getRow(), source.getColumn() + 1);
+			ChassPiece rook = (ChassPiece)board.removePiece(sourceR);
+			board.placePiece(rook, targetR);
+			rook.increaseMoveCount();
+		
+		}
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() - 2){
+			Position sourceR = new Position(source.getRow(), source.getColumn() - 4);
+			Position targetR = new Position(source.getRow(), source.getColumn() - 1);
+			ChassPiece rook = (ChassPiece)board.removePiece(sourceR);
+			board.placePiece(rook, targetR);
+			rook.increaseMoveCount();
+		
+		}
 		return capturedPiece;
-
 	}
 
 	private void undoMove(Position source, Position target, Piece capturePiece) {
@@ -107,6 +126,24 @@ public class ChassMatch {
 			board.placePiece(capturePiece, target);
 			capturedPieces.remove(capturePiece);
 			piecesOnTheBoard.add(capturePiece);
+		}
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() + 2){
+			Position sourceR = new Position(source.getRow(), source.getColumn() + 3);
+			Position targetR = new Position(source.getRow(), source.getColumn() + 1);
+			ChassPiece rook = (ChassPiece)board.removePiece(targetR);
+			board.placePiece(rook, sourceR);
+			rook.decreaseMoveCount();
+		
+		}
+		
+		if(p instanceof King && target.getColumn() == source.getColumn() - 2){
+			Position sourceR = new Position(source.getRow(), source.getColumn() - 4);
+			Position targetR = new Position(source.getRow(), source.getColumn() - 1);
+			ChassPiece rook = (ChassPiece)board.removePiece(targetR);
+			board.placePiece(rook, sourceR);
+			rook.decreaseMoveCount();
+		
 		}
 	}
 
@@ -201,7 +238,7 @@ public class ChassMatch {
 		placeNewPiece('b', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('d', 1, new Queen(board, Color.WHITE));
-		placeNewPiece('e', 1, new King(board, Color.WHITE));
+		placeNewPiece('e', 1, new King(board, Color.WHITE, this));
 		placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('g', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('h', 1, new Rook(board, Color.WHITE));
@@ -218,7 +255,7 @@ public class ChassMatch {
 		placeNewPiece('b', 8, new Knight(board, Color.BLACK));
 		placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('d', 8, new Queen(board, Color.BLACK));
-		placeNewPiece('e', 8, new King(board, Color.BLACK));
+		placeNewPiece('e', 8, new King(board, Color.BLACK, this));
 		placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('g', 8, new Knight(board, Color.BLACK));
 		placeNewPiece('h', 8, new Rook(board, Color.BLACK));
