@@ -1,13 +1,9 @@
 package chass;
 
-import java.security.InvalidParameterException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.swing.border.Border;
-
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -122,7 +118,7 @@ public class ChassMatch {
 			throw new IllegalStateException("There is no poece to be promoted:");
 		}
 		if(!type.equals("B") && !type.equals("N") && !type.equals("R") && !type.equals("Q")) {
-			throw new InvalidParameterException("Invalid type for promotion");
+			return promoted;
 		}
 		
 		Position pos = promoted.getChassPosition().toPosition();
@@ -357,12 +353,4 @@ public class ChassMatch {
 		placeNewPiece('g', 7, new Pawn(board, Color.BLACK, this));
 		placeNewPiece('h', 7, new Pawn(board, Color.BLACK, this));
 	}
-
-	/*
-	 * public ChassPiece[][] getPices(){ ChassPiece[][] mat = new
-	 * ChassPiece[board.getRows()][board.getColumns()]; for(int i = 0; i <
-	 * board.getRows(); i++) { for(int j = 0; j < board.getColumns(); j++) {
-	 * mat[i][j] = (ChassPiece) board.piece(i, j); } } return mat; }
-	 */
-
 }
