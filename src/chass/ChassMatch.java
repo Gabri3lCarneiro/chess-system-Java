@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.border.Border;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -23,6 +24,7 @@ public class ChassMatch {
 	private Board board;
 	private boolean check;
 	private boolean checkMate;
+	private ChassPiece enPassantVulnerable;
 
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -60,6 +62,10 @@ public class ChassMatch {
 		return checkMate;
 	}
 
+	public ChassPiece getEnPassantVulnerable() {
+		return enPassantVulnerable;
+	}
+
 	public boolean[][] possibleMoves(ChassPosition sourcePosition) {
 		Position position = sourcePosition.toPosition();
 		validadeSourcePosition(position);
@@ -72,17 +78,28 @@ public class ChassMatch {
 		validadeSourcePosition(source);
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
-
 		if (testCheck(currentPlayer)) {
 			undoMove(source, target, capturedPiece);
 			throw new ChassException("You cam't put yourself un check: ");
 		}
 
+		ChassPiece movedPiece = (ChassPiece) board.piece(target);
+
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
 		if (testCheck(opponent(currentPlayer))) {
 			checkMate = true;
+		} else {
+			nextTurn();
 		}
-		nextTurn();
+
+		// enPassant
+		if (movedPiece instanceof Pawn
+				&& (target.getRow() == source.getRow() - 2 || target.getRow() == source.getRow() + 2)) {
+			enPassantVulnerable = movedPiece;
+		} else {
+			enPassantVulnerable = null;
+		}
+
 		return (ChassPiece) capturedPiece;
 	}
 
@@ -96,55 +113,87 @@ public class ChassMatch {
 			piecesOnTheBoard.remove(capturedPiece);
 			capturedPieces.addAll(capturedPieces);
 		}
-		
-		if(p instanceof King && target.getColumn() == source.getColumn() + 2){
+
+		if (p instanceof King && target.getColumn() == source.getColumn() + 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() + 3);
 			Position targetR = new Position(source.getRow(), source.getColumn() + 1);
-			ChassPiece rook = (ChassPiece)board.removePiece(sourceR);
+			ChassPiece rook = (ChassPiece) board.removePiece(sourceR);
 			board.placePiece(rook, targetR);
 			rook.increaseMoveCount();
-		
+
 		}
-		
-		if(p instanceof King && target.getColumn() == source.getColumn() - 2){
+
+		if (p instanceof King && target.getColumn() == source.getColumn() - 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() - 4);
 			Position targetR = new Position(source.getRow(), source.getColumn() - 1);
-			ChassPiece rook = (ChassPiece)board.removePiece(sourceR);
+			ChassPiece rook = (ChassPiece) board.removePiece(sourceR);
 			board.placePiece(rook, targetR);
 			rook.increaseMoveCount();
-		
+
 		}
+		// enPassant
+		if (p instanceof Pawn) {
+			if (source.getColumn() != target.getColumn() && capturedPiece == null) {
+				Position pawnPosition;
+				if (p.getColor() == Color.WHITE) {
+					pawnPosition = new Position(target.getRow() + 1, target.getColumn());
+				} else {
+					pawnPosition = new Position(target.getRow() - 1, target.getColumn());
+				}
+				capturedPiece = board.removePiece(pawnPosition);
+				capturedPieces.add(capturedPiece);
+				piecesOnTheBoard.remove(capturedPiece);
+			}
+		}
+
 		return capturedPiece;
 	}
 
-	private void undoMove(Position source, Position target, Piece capturePiece) {
+	private void undoMove(Position source, Position target, Piece capturedPiece) {
 		ChassPiece p = (ChassPiece) board.removePiece(target);
 		p.decreaseMoveCount();
 		board.placePiece(p, source);
 
-		if (capturePiece != null) {
-			board.placePiece(capturePiece, target);
-			capturedPieces.remove(capturePiece);
-			piecesOnTheBoard.add(capturePiece);
+		if (capturedPiece != null) {
+			board.placePiece(capturedPiece, target);
+			capturedPieces.remove(capturedPiece);
+			piecesOnTheBoard.add(capturedPiece);
 		}
-		
-		if(p instanceof King && target.getColumn() == source.getColumn() + 2){
+
+		if (p instanceof King && target.getColumn() == source.getColumn() + 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() + 3);
 			Position targetR = new Position(source.getRow(), source.getColumn() + 1);
-			ChassPiece rook = (ChassPiece)board.removePiece(targetR);
+			ChassPiece rook = (ChassPiece) board.removePiece(targetR);
 			board.placePiece(rook, sourceR);
 			rook.decreaseMoveCount();
-		
+
 		}
-		
-		if(p instanceof King && target.getColumn() == source.getColumn() - 2){
+
+		if (p instanceof King && target.getColumn() == source.getColumn() - 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() - 4);
 			Position targetR = new Position(source.getRow(), source.getColumn() - 1);
-			ChassPiece rook = (ChassPiece)board.removePiece(targetR);
+			ChassPiece rook = (ChassPiece) board.removePiece(targetR);
 			board.placePiece(rook, sourceR);
 			rook.decreaseMoveCount();
-		
+
 		}
+
+		// enPassant
+		if (p instanceof Pawn) {
+			if (source.getColumn() != target.getColumn() && capturedPiece == enPassantVulnerable) {
+				ChassPiece pawn = (ChassPiece) board.removePiece(target);
+
+				Position pawnPosition;
+				if (p.getColor() == Color.WHITE) {
+					pawnPosition = new Position(3, target.getColumn());
+				} else {
+					pawnPosition = new Position(4, target.getColumn());
+				}
+				board.placePiece(pawn, pawnPosition);
+
+			}
+		}
+
 	}
 
 	private void validadeSourcePosition(Position position) {
@@ -242,14 +291,14 @@ public class ChassMatch {
 		placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('g', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('h', 1, new Rook(board, Color.WHITE));
-		placeNewPiece('a', 2, new Pawn(board, Color.WHITE));
-		placeNewPiece('b', 2, new Pawn(board, Color.WHITE));
-		placeNewPiece('c', 2, new Pawn(board, Color.WHITE));
-		placeNewPiece('d', 2, new Pawn(board, Color.WHITE));
-		placeNewPiece('e', 2, new Pawn(board, Color.WHITE));
-		placeNewPiece('f', 2, new Pawn(board, Color.WHITE));
-		placeNewPiece('g', 2, new Pawn(board, Color.WHITE));
-		placeNewPiece('h', 2, new Pawn(board, Color.WHITE));
+		placeNewPiece('a', 2, new Pawn(board, Color.WHITE, this));
+		placeNewPiece('b', 2, new Pawn(board, Color.WHITE, this));
+		placeNewPiece('c', 2, new Pawn(board, Color.WHITE, this));
+		placeNewPiece('d', 2, new Pawn(board, Color.WHITE, this));
+		placeNewPiece('e', 2, new Pawn(board, Color.WHITE, this));
+		placeNewPiece('f', 2, new Pawn(board, Color.WHITE, this));
+		placeNewPiece('g', 2, new Pawn(board, Color.WHITE, this));
+		placeNewPiece('h', 2, new Pawn(board, Color.WHITE, this));
 
 		placeNewPiece('a', 8, new Rook(board, Color.BLACK));
 		placeNewPiece('b', 8, new Knight(board, Color.BLACK));
@@ -259,14 +308,14 @@ public class ChassMatch {
 		placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('g', 8, new Knight(board, Color.BLACK));
 		placeNewPiece('h', 8, new Rook(board, Color.BLACK));
-		placeNewPiece('a', 7, new Pawn(board, Color.BLACK));
-		placeNewPiece('b', 7, new Pawn(board, Color.BLACK));
-		placeNewPiece('c', 7, new Pawn(board, Color.BLACK));
-		placeNewPiece('d', 7, new Pawn(board, Color.BLACK));
-		placeNewPiece('e', 7, new Pawn(board, Color.BLACK));
-		placeNewPiece('f', 7, new Pawn(board, Color.BLACK));
-		placeNewPiece('g', 7, new Pawn(board, Color.BLACK));
-		placeNewPiece('h', 7, new Pawn(board, Color.BLACK));
+		placeNewPiece('a', 7, new Pawn(board, Color.BLACK, this));
+		placeNewPiece('b', 7, new Pawn(board, Color.BLACK, this));
+		placeNewPiece('c', 7, new Pawn(board, Color.BLACK, this));
+		placeNewPiece('d', 7, new Pawn(board, Color.BLACK, this));
+		placeNewPiece('e', 7, new Pawn(board, Color.BLACK, this));
+		placeNewPiece('f', 7, new Pawn(board, Color.BLACK, this));
+		placeNewPiece('g', 7, new Pawn(board, Color.BLACK, this));
+		placeNewPiece('h', 7, new Pawn(board, Color.BLACK, this));
 	}
 
 	/*
