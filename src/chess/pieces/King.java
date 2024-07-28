@@ -1,28 +1,28 @@
-package chass.pieces;
+package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
-import chass.ChassMatch;
-import chass.ChassPiece;
-import chass.Color;
+import chess.ChessMatch;
+import chess.ChessPiece;
+import chess.Color;
 
-public class King extends ChassPiece {
+public class King extends ChessPiece {
 
-	private ChassMatch chassMatch;
+	private ChessMatch chessMatch;
 	
 	
 	
 	
 	
-	public King(Board board, Color color, ChassMatch chassMatch) {
+	public King(Board board, Color color, ChessMatch chessMatch) {
 		super(board, color);
-		this.chassMatch = chassMatch;
+		this.chessMatch = chessMatch;
 
 	}
 	
 	
 	private boolean testRookCastling(Position position) {
-		ChassPiece p = (ChassPiece)getBoard().piece(position);
+		ChessPiece p = (ChessPiece)getBoard().piece(position);
 		return p != null && p instanceof Rook && p.getColor() == getColor() && p.getMoveCount() == 0;
 	}
 	
@@ -33,7 +33,7 @@ public class King extends ChassPiece {
 	}
 
 	private boolean canMove(Position position) {
-		ChassPiece p = (ChassPiece) getBoard().piece(position);
+		ChessPiece p = (ChessPiece) getBoard().piece(position);
 		return p == null || p.getColor() != getColor();
 
 	}
@@ -94,7 +94,7 @@ public class King extends ChassPiece {
 			
 			
 		// special move castling
-		if(getMoveCount() == 0 && !chassMatch.getCheck() ) {
+		if(getMoveCount() == 0 && !chessMatch.getCheck() ) {
 			Position positionR1 = new Position(position.getRow(), position.getColumn() + 3);
 			if(testRookCastling(positionR1)) {
 				Position p1 = new Position(position.getRow(), position.getColumn() + 1);
@@ -105,7 +105,7 @@ public class King extends ChassPiece {
 			}
 		}
 			
-		if(getMoveCount() == 0 && !chassMatch.getCheck() ) {
+		if(getMoveCount() == 0 && !chessMatch.getCheck() ) {
 			Position positionR2 = new Position(position.getRow(), position.getColumn() - 4);
 			if(testRookCastling(positionR2)) {
 				Position p1 = new Position(position.getRow(), position.getColumn() - 1);

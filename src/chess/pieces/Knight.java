@@ -1,11 +1,11 @@
-package chass.pieces;
+package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
-import chass.ChassPiece;
-import chass.Color;
+import chess.ChessPiece;
+import chess.Color;
 
-public class Knight extends ChassPiece{
+public class Knight extends ChessPiece{
 
 	public Knight(Board board, Color color) {
 		super(board, color);
@@ -13,7 +13,7 @@ public class Knight extends ChassPiece{
 	}
 
 	private boolean canMove(Position position) {
-		ChassPiece p = (ChassPiece) getBoard().piece(position);
+		ChessPiece p = (ChessPiece) getBoard().piece(position);
 		return p == null || p.getColor() != getColor();
 
 	}

@@ -1,12 +1,12 @@
-package chass;
+package chess;
 
 import boardgame.BoardExeption;
 
-public class ChassException extends BoardExeption{
+public class ChessException extends BoardExeption{
 	private static final long serialVersionUID = 1L;
 
 	
-	public ChassException(String msg) {
+	public ChessException(String msg) {
 		super(msg);
 	}
 

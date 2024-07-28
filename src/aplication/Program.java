@@ -5,10 +5,10 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import chass.ChassException;
-import chass.ChassMatch;
-import chass.ChassPiece;
-import chass.ChassPosition;
+import chess.ChessException;
+import chess.ChessMatch;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 public class Program {
 
@@ -16,8 +16,8 @@ public class Program {
 
 		Scanner sc = new Scanner(System.in);
 		
-		ChassMatch chessMatch = new ChassMatch();
-		List<ChassPiece> captured = new ArrayList<>();
+		ChessMatch chessMatch = new ChessMatch();
+		List<ChessPiece> captured = new ArrayList<>();
 
 		
 		while (!chessMatch.getChackMate()) {
@@ -26,7 +26,7 @@ public class Program {
 				UI.printMach(chessMatch, captured);
 				System.out.println();
 				System.out.println("Source: ");
-				ChassPosition source = UI.readChessPosition(sc);
+				ChessPosition source = UI.readChessPosition(sc);
 				
 				boolean[][] possibleMoves = chessMatch.possibleMoves(source);
 				UI.clearScrean();
@@ -35,9 +35,9 @@ public class Program {
 				
 				System.out.println();
 				System.out.println("Target: ");
-				ChassPosition target = UI.readChessPosition(sc);
+				ChessPosition target = UI.readChessPosition(sc);
 				
-				ChassPiece captuedPiece = chessMatch.performChessMove(source, target);
+				ChessPiece captuedPiece = chessMatch.performChessMove(source, target);
 
 				if(captuedPiece != null) {
 					captured.add(captuedPiece);
@@ -53,7 +53,7 @@ public class Program {
 					chessMatch.replacePromotedPiece(type);
 				}
 			}
-			catch (ChassException e){
+			catch (ChessException e){
 				System.out.println(e.getMessage());
 				sc.hasNextLine();
 			}

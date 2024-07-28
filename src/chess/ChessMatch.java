@@ -1,4 +1,4 @@
-package chass;
+package chess;
 
 
 import java.util.ArrayList;
@@ -7,38 +7,38 @@ import java.util.stream.Collectors;
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
-import chass.pieces.Bishop;
-import chass.pieces.King;
-import chass.pieces.Knight;
-import chass.pieces.Pawn;
-import chass.pieces.Queen;
-import chass.pieces.Rook;
+import chess.pieces.Bishop;
+import chess.pieces.King;
+import chess.pieces.Knight;
+import chess.pieces.Pawn;
+import chess.pieces.Queen;
+import chess.pieces.Rook;
 
-public class ChassMatch {
+public class ChessMatch {
 
 	private int turn;
 	private Color currentPlayer;
 	private Board board;
 	private boolean check;
 	private boolean checkMate;
-	private ChassPiece enPassantVulnerable;
-	private ChassPiece promoted;
+	private ChessPiece enPassantVulnerable;
+	private ChessPiece promoted;
 
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
 
-	public ChassMatch() {
+	public ChessMatch() {
 		board = new Board(8, 8);
 		turn = 1;
 		currentPlayer = Color.WHITE;
 		initialSetup();
 	}
 
-	public ChassPiece[][] getPices() {
-		ChassPiece[][] mat = new ChassPiece[board.getRows()][board.getColumns()];
+	public ChessPiece[][] getPices() {
+		ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
 		for (int i = 0; i < board.getRows(); i++) {
 			for (int j = 0; j < board.getColumns(); j++) {
-				mat[i][j] = (ChassPiece) board.piece(i, j);
+				mat[i][j] = (ChessPiece) board.piece(i, j);
 			}
 		}
 		return mat;
@@ -60,21 +60,21 @@ public class ChassMatch {
 		return checkMate;
 	}
 
-	public ChassPiece getEnPassantVulnerable() {
+	public ChessPiece getEnPassantVulnerable() {
 		return enPassantVulnerable;
 	}
 	
-	public ChassPiece getPromoted() {
+	public ChessPiece getPromoted() {
 		return promoted;
 	}
 
-	public boolean[][] possibleMoves(ChassPosition sourcePosition) {
+	public boolean[][] possibleMoves(ChessPosition sourcePosition) {
 		Position position = sourcePosition.toPosition();
 		validadeSourcePosition(position);
 		return board.piece(position).possibleMoves();
 	}
 
-	public ChassPiece performChessMove(ChassPosition sourcePosition, ChassPosition targetPosition) {
+	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
 		Position source = sourcePosition.toPosition();
 		Position target = targetPosition.toPosition();
 		validadeSourcePosition(source);
@@ -82,16 +82,16 @@ public class ChassMatch {
 		Piece capturedPiece = makeMove(source, target);
 		if (testCheck(currentPlayer)) {
 			undoMove(source, target, capturedPiece);
-			throw new ChassException("You cam't put yourself un check: ");
+			throw new ChessException("You cam't put yourself un check: ");
 		}
 
-		ChassPiece movedPiece = (ChassPiece) board.piece(target);
+		ChessPiece movedPiece = (ChessPiece) board.piece(target);
 
 		//promotion
 		promoted = null;
 		if(movedPiece instanceof Pawn){
 			if(movedPiece.getColor() == Color.WHITE && target.getRow() == 0 || movedPiece.getColor() == Color.BLACK && target.getRow() == 7 ) {
-				promoted =(ChassPiece)board.piece(target);
+				promoted =(ChessPiece)board.piece(target);
 				promoted = replacePromotedPiece("Q");
 			}
 		}
@@ -110,10 +110,10 @@ public class ChassMatch {
 			enPassantVulnerable = null;
 		}
 
-		return (ChassPiece) capturedPiece;
+		return (ChessPiece) capturedPiece;
 	}
 
-	public ChassPiece replacePromotedPiece(String type) {
+	public ChessPiece replacePromotedPiece(String type) {
 		if (promoted == null) {
 			throw new IllegalStateException("There is no poece to be promoted:");
 		}
@@ -125,14 +125,14 @@ public class ChassMatch {
 		Piece p = board.removePiece(pos);
 		piecesOnTheBoard.remove(p);
 		
-		ChassPiece newPiece = newPiece(type, promoted.getColor());
+		ChessPiece newPiece = newPiece(type, promoted.getColor());
 		board.placePiece(newPiece, pos);
 		
 		piecesOnTheBoard.add(newPiece);
 		return newPiece;
 	}
 	
-	private ChassPiece newPiece(String type, Color color) {
+	private ChessPiece newPiece(String type, Color color) {
 		if(type.equals("B")) return new Bishop(board, color);
 		if(type.equals("N")) return new Knight(board, color);
 		if(type.equals("Q")) return new Queen(board, color);
@@ -140,7 +140,7 @@ public class ChassMatch {
 	}
 	
 	private Piece makeMove(Position source, Position target) {
-		ChassPiece p = (ChassPiece) board.removePiece(source);
+		ChessPiece p = (ChessPiece) board.removePiece(source);
 		p.increaseMoveCount();
 		Piece capturedPiece = board.removePiece(target);
 		board.placePiece(p, target);
@@ -153,7 +153,7 @@ public class ChassMatch {
 		if (p instanceof King && target.getColumn() == source.getColumn() + 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() + 3);
 			Position targetR = new Position(source.getRow(), source.getColumn() + 1);
-			ChassPiece rook = (ChassPiece) board.removePiece(sourceR);
+			ChessPiece rook = (ChessPiece) board.removePiece(sourceR);
 			board.placePiece(rook, targetR);
 			rook.increaseMoveCount();
 
@@ -162,7 +162,7 @@ public class ChassMatch {
 		if (p instanceof King && target.getColumn() == source.getColumn() - 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() - 4);
 			Position targetR = new Position(source.getRow(), source.getColumn() - 1);
-			ChassPiece rook = (ChassPiece) board.removePiece(sourceR);
+			ChessPiece rook = (ChessPiece) board.removePiece(sourceR);
 			board.placePiece(rook, targetR);
 			rook.increaseMoveCount();
 
@@ -186,7 +186,7 @@ public class ChassMatch {
 	}
 
 	private void undoMove(Position source, Position target, Piece capturedPiece) {
-		ChassPiece p = (ChassPiece) board.removePiece(target);
+		ChessPiece p = (ChessPiece) board.removePiece(target);
 		p.decreaseMoveCount();
 		board.placePiece(p, source);
 
@@ -199,7 +199,7 @@ public class ChassMatch {
 		if (p instanceof King && target.getColumn() == source.getColumn() + 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() + 3);
 			Position targetR = new Position(source.getRow(), source.getColumn() + 1);
-			ChassPiece rook = (ChassPiece) board.removePiece(targetR);
+			ChessPiece rook = (ChessPiece) board.removePiece(targetR);
 			board.placePiece(rook, sourceR);
 			rook.decreaseMoveCount();
 
@@ -208,7 +208,7 @@ public class ChassMatch {
 		if (p instanceof King && target.getColumn() == source.getColumn() - 2) {
 			Position sourceR = new Position(source.getRow(), source.getColumn() - 4);
 			Position targetR = new Position(source.getRow(), source.getColumn() - 1);
-			ChassPiece rook = (ChassPiece) board.removePiece(targetR);
+			ChessPiece rook = (ChessPiece) board.removePiece(targetR);
 			board.placePiece(rook, sourceR);
 			rook.decreaseMoveCount();
 
@@ -217,7 +217,7 @@ public class ChassMatch {
 		// enPassant
 		if (p instanceof Pawn) {
 			if (source.getColumn() != target.getColumn() && capturedPiece == enPassantVulnerable) {
-				ChassPiece pawn = (ChassPiece) board.removePiece(target);
+				ChessPiece pawn = (ChessPiece) board.removePiece(target);
 
 				Position pawnPosition;
 				if (p.getColor() == Color.WHITE) {
@@ -234,19 +234,19 @@ public class ChassMatch {
 
 	private void validadeSourcePosition(Position position) {
 		if (!board.therIsAPiece(position)) {
-			throw new ChassException("There is no piece on source position");
+			throw new ChessException("There is no piece on source position");
 		}
-		if (currentPlayer != ((ChassPiece) board.piece(position)).getColor()) {
-			throw new ChassException("The chosen piece is not yours");
+		if (currentPlayer != ((ChessPiece) board.piece(position)).getColor()) {
+			throw new ChessException("The chosen piece is not yours");
 		}
 		if (!board.piece(position).isThereAnyPossibleMovie()) {
-			throw new ChassException("There is no possible moves for the chosen piece ");
+			throw new ChessException("There is no possible moves for the chosen piece ");
 		}
 	}
 
 	private void validateTargetPosition(Position source, Position target) {
 		if (!board.piece(source).possibleMove(target)) {
-			throw new ChassException("The choses piece can't move to target position");
+			throw new ChessException("The choses piece can't move to target position");
 		}
 	}
 
@@ -254,12 +254,12 @@ public class ChassMatch {
 		return (color == color.WHITE) ? color.BLACK : color.WHITE;
 	}
 
-	private ChassPiece king(Color color) {
-		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChassPiece) x).getColor() == color)
+	private ChessPiece king(Color color) {
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color)
 				.collect(Collectors.toList());
 		for (Piece p : list) {
 			if (p instanceof King) {
-				return (ChassPiece) p;
+				return (ChessPiece) p;
 			}
 		}
 
@@ -269,7 +269,7 @@ public class ChassMatch {
 	private boolean testCheck(Color color) {
 		Position kingPosition = king(color).getChassPosition().toPosition();
 		List<Piece> opponentPieces = piecesOnTheBoard.stream()
-				.filter(x -> ((ChassPiece) x).getColor() == opponent(color)).collect(Collectors.toList());
+				.filter(x -> ((ChessPiece) x).getColor() == opponent(color)).collect(Collectors.toList());
 
 		for (Piece p : opponentPieces) {
 			boolean[][] mat = p.possibleMoves();
@@ -284,7 +284,7 @@ public class ChassMatch {
 		if (testCheck(color)) {
 			return false;
 		}
-		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChassPiece) x).getColor() == color)
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color)
 				.collect(Collectors.toList());
 		for (Piece p : list) {
 			boolean[][] mat = p.possibleMoves();
@@ -292,7 +292,7 @@ public class ChassMatch {
 			for (int i = 0; i < board.getRows(); i++) {
 				for (int j = 0; i < board.getColumns(); j++) {
 					if (mat[i][j]) {
-						Position source = ((ChassPiece) p).getChassPosition().toPosition();
+						Position source = ((ChessPiece) p).getChassPosition().toPosition();
 						Position target = new Position(i, j);
 						Piece capturedPiece = makeMove(source, target);
 						boolean testCheck = testCheck(color);
@@ -307,8 +307,8 @@ public class ChassMatch {
 		return true;
 	}
 
-	private void placeNewPiece(char column, int row, ChassPiece piece) {
-		board.placePiece(piece, new ChassPosition(column, row).toPosition());
+	private void placeNewPiece(char column, int row, ChessPiece piece) {
+		board.placePiece(piece, new ChessPosition(column, row).toPosition());
 		piecesOnTheBoard.add(piece);
 	}
 

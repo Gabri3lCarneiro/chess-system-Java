@@ -1,4 +1,4 @@
-package chass;
+package chess;
 
 
 
@@ -6,18 +6,18 @@ import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
 
-public abstract class ChassPiece extends Piece {
+public abstract class ChessPiece extends Piece {
 
 	protected int moveCount;
 	private Color color;
 
-	public ChassPiece(Board board, Color color) {
+	public ChessPiece(Board board, Color color) {
 		super(board);
 		this.color = color;
 	}
 
-	public ChassPosition getChassPosition() {
-		return ChassPosition.fromPosition(position);
+	public ChessPosition getChassPosition() {
+		return ChessPosition.fromPosition(position);
 	}
 	public Color getColor() {
 		return color;
@@ -38,7 +38,7 @@ public abstract class ChassPiece extends Piece {
 	
 	
 	protected boolean isThereOpponentPiece(Position position) {
-		ChassPiece p = (ChassPiece) getBoard().piece(position);
+		ChessPiece p = (ChessPiece) getBoard().piece(position);
 		return p != null && p.getColor() != color;
 
 	}

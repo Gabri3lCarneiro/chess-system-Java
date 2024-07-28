@@ -1,11 +1,11 @@
-package chass.pieces;
+package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
-import chass.ChassPiece;
-import chass.Color;
+import chess.ChessPiece;
+import chess.Color;
 
-public class Queen extends ChassPiece{
+public class Queen extends ChessPiece{
 
 	
 
